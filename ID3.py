@@ -1,4 +1,17 @@
-import utls.data
+
+import numpy as np
+import pandas as pd
+import utls.TDIDT as UT
+import utls
+import pandas
+import utls.learning_algos.ID3_impl as ID3
 
 if __name__ == '__main__':
-   print(utls.data.data('train.csv').data)
+
+   Classifer_ID3 = ID3.ID3('train.csv')
+   success_rate = utls.TDIDT.test('test.csv',Classifer_ID3.Classify)
+   print(success_rate)
+
+
+
+

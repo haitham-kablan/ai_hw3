@@ -19,7 +19,7 @@ class IG_MAX:
                 e_i = E.loc[E[continous_feature] < saf]
             e_i_size = len(e_i.index)
             if e_i_size == 0:
-                return -float('inf')
+                return float('-inf')
             h_e_i = self.H(e_i)
             sum += (e_i_size/E_size) * h_e_i
         return H_e - sum
@@ -43,7 +43,7 @@ class IG_MAX:
                 best_sum = sum
                 best_saf = (f_ks[f] + f_ks[f+1])/2
 
-        return  h_e - best_sum , best_saf
+        return  best_sum , best_saf
 
 
 
@@ -67,8 +67,7 @@ class IG_MAX:
         for c in ['B','M']:
             size_c  = len(E.loc[E['diagnosis'] == c].index)
             size_table = len(E.index)
-            if size_table ==0:
-                return float('inf')
+
             prob_c = size_c/size_table
             log =  math.log(prob_c + eps,2)
             sum+= -prob_c * log

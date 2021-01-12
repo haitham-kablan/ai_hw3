@@ -21,7 +21,7 @@ def TDIT(E, F, DEFAULT, Select_Feature,M):
 
     assert isinstance(E, pandas.DataFrame)
 
-    if len(E) < M:
+    if len(E) < M or E.empty:
         return None,None, [], DEFAULT
 
     c = E.diagnosis.mode()[0]

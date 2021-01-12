@@ -8,7 +8,7 @@ import utls.learning_algos.ID3_impl as ID3
 
 if __name__ == '__main__':
 
-   Classifer_ID3 = ID3.ID3('train.csv',0)
+   Classifer_ID3 = ID3.ID3('train.csv',13)
    success_rate = utls.TDIDT.test('test.csv',Classifer_ID3.Classify)
    print(success_rate)
 

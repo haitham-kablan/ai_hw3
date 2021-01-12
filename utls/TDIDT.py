@@ -17,11 +17,11 @@ def Classify(tree , test_sample , features_dict):
         return Classify(subtress[1], test_sample , features_dict)
 
 
-def TDIT(E, F, DEFAULT, Select_Feature):
+def TDIT(E, F, DEFAULT, Select_Feature,M):
 
     assert isinstance(E, pandas.DataFrame)
 
-    if E.empty:
+    if len(E) < M:
         return None,None, [], DEFAULT
 
     c = E.diagnosis.mode()[0]
@@ -33,8 +33,8 @@ def TDIT(E, F, DEFAULT, Select_Feature):
     new_feature, limit = Select_Feature(E, F)
 
     subtrees = []
-    subtrees.append(TDIT(E.loc[E[new_feature] >= limit],F,c, Select_Feature))
-    subtrees.append(TDIT(E.loc[E[new_feature] < limit],F,c, Select_Feature))
+    subtrees.append(TDIT(E.loc[E[new_feature] >= limit],F,c, Select_Feature,M))
+    subtrees.append(TDIT(E.loc[E[new_feature] < limit],F,c, Select_Feature,M))
 
     return new_feature, limit, subtrees, c
 

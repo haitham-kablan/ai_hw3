@@ -3,7 +3,7 @@ import pandas
 from sklearn.model_selection import KFold
 import utls.learning_algos.ID3_impl as ID3_imp
 import utls.tests.succ_rate_test as run_test
-
+import numpy as np
 
 def aplly_k_validation(file_name,M_list):
 

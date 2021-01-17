@@ -53,19 +53,19 @@ if __name__ == '__main__':
 
    # here we bulid ID3_classifier and we save the desicion tree in it
    # u can click it for more information.
-   Classifer_ID3 = ID3_imp.ID3(df,0)
+   #Classifer_ID3 = ID3_imp.ID3(df,0)
 
 
-   data_test = pandas.read_csv('test.csv')
+   #data_test = pandas.read_csv('test.csv')
 
    # the test method will run through the test data and classify each data using
    # the classify function of ID3_classifer that we built before.
-   success_rate = run_test.test(data_test,Classifer_ID3.Classify)
+   #success_rate = run_test.test(data_test,Classifer_ID3.Classify)
 
-   print(success_rate)
+   #print(success_rate)
 
    #turn it on if you want to see the experince
-   #experiment('train.csv')
+   experiment('train.csv')
 
 
 

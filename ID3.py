@@ -5,7 +5,7 @@ import utls.learning_algos.ID3_impl as ID3_imp
 import utls.tests.succ_rate_test as run_test
 import utls.tests.k_validation as k_validations
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 
 
@@ -49,6 +49,7 @@ def experiment(file_name):
 if __name__ == '__main__':
 
    df = pandas.read_csv('train.csv')
+
 
    # here we bulid ID3_classifier and we save the desicion tree in it
    # u can click it for more information.

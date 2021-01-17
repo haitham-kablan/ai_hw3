@@ -4,41 +4,41 @@ import utls.SelectFeatures
 import numpy as np
 from sklearn.model_selection import KFold
 import utls.learning_algos.ID3_impl
+import utls.np_array_helper_functions as np_utls
 
 
-def Classify(tree , test_sample , features_dict):
+def Classify(tree , test_sample ):
 
-    feature, limit, subtress, c = tree
+    feature_index, saf, subtress, c = tree
 
     if subtress == []:
         return c
 
-    if test_sample[features_dict[feature]] >= limit:
-        return Classify(subtress[0], test_sample , features_dict)
+    if test_sample[feature_index] >= saf:
+        return Classify(subtress[0], test_sample)
     else:
-        return Classify(subtress[1], test_sample , features_dict)
+        return Classify(subtress[1], test_sample)
 
 
 def TDIT(E, F, DEFAULT, Select_Feature,M):
 
-    assert isinstance(E, pandas.DataFrame)
-
-    if len(E) < M or E.empty:
+    if E.shape[0] < M or E.shape[0] == 0:
         return None,None, [], DEFAULT
 
-    c = E.diagnosis.mode()[0]
-    all_c = len(E.loc[E['diagnosis'] == c].index) == len(E.index)
+    c = np_utls.calc_majority(E)
+    all_c = np_utls.all_same_majority(E,c)
 
     if all_c:
         return None , None, [], c
 
-    new_feature, limit = Select_Feature(E, F)
+    new_feature_index, saf = Select_Feature(E, F)
 
+    bigger_than_saf , lower_than_saf = np_utls.split(E,new_feature_index,saf)
     subtrees = []
-    subtrees.append(TDIT(E.loc[E[new_feature] >= limit],F,c, Select_Feature,M))
-    subtrees.append(TDIT(E.loc[E[new_feature] < limit],F,c, Select_Feature,M))
+    subtrees.append(TDIT(bigger_than_saf,F,c, Select_Feature,M))
+    subtrees.append(TDIT(lower_than_saf,F,c, Select_Feature,M))
 
-    return new_feature, limit, subtrees, c
+    return new_feature_index, saf, subtrees, c
 
 
 

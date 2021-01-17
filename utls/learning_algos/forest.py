@@ -13,12 +13,12 @@ class KNN:
         self.P = P
 
         n = len(data)
-        self.trees = np.zeros(N)
+        self.trees = []
         self.centroid = np.zeros(N)
 
         for i in range(0, N):
             data_per_tree = data.sample(P * n)
-            self.trees[i] = ID3.ID3(df=data_per_tree, M=0)
+            self.trees.append(ID3.ID3(df=data_per_tree, M=0))
             self.centroid[i] = calc_avg(data_per_tree)
 
 

@@ -4,7 +4,7 @@ import pandas
 import utls.learning_algos.ID3_impl as ID3_imp
 import utls.tests.succ_rate_test as run_test
 import utls.tests.k_validation as k_validations
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 
@@ -22,7 +22,7 @@ def experiment(file_name):
    :return: this function will return the avergae succ rate for each M that is in the list.
    '''
 
-   M_list = [0, 2 , 15 , 45,120]
+   M_list = [0, 4 , 15 , 45,120]
    succ_rate = k_validations.aplly_k_validation(file_name,M_list)
 
    # plotting the points
@@ -52,19 +52,19 @@ if __name__ == '__main__':
 
    # here we bulid ID3_classifier and we save the desicion tree in it
    # u can click it for more information.
-   #Classifer_ID3 = ID3_imp.ID3(df,0)
+   Classifer_ID3 = ID3_imp.ID3(df,0)
 
 
-   #data_test = pandas.read_csv('test.csv')
+   data_test = pandas.read_csv('test.csv')
 
    # the test method will run through the test data and classify each data using
    # the classify function of ID3_classifer that we built before.
-   #success_rate = run_test.test(data_test,Classifer_ID3.Classify)
+   success_rate = run_test.test(data_test,Classifer_ID3.Classify)
 
-   #print(success_rate)
+   print(success_rate)
 
    #turn it on if you want to see the experince
-   experiment('train.csv')
+   #experiment('train.csv')
 
 
 

@@ -40,7 +40,7 @@ def aplly_k_validation(file_name,M_list):
     # calc the average for each M and return it
     avg_succ_rate = [i/5 for i in succ_rate]
     print('Average success rate:')
-    for i in avg_succ_rate:
+    for i in range(0,5):
         print('     M = ',i,' , success rate: ',avg_succ_rate[i])
     return avg_succ_rate
 

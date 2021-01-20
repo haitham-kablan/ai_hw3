@@ -14,32 +14,30 @@ class KNN:
 
         n = len(data)
         self.trees = []
-        self.centroid = np.zeros(N)
+        self.centroid = []
 
         for i in range(0, N):
-            data_per_tree = data.sample(P * n)
+            data_per_tree = data.sample(math.floor(P * n))
             self.trees.append(ID3.ID3(df=data_per_tree, M=0))
-            self.centroid[i] = calc_avg(data_per_tree)
+            self.centroid.append(calc_avg(data_per_tree))
+
 
 
     def Classify(self,o):
+
         distance_from_sample = []
         features = self.data.columns[1::].values.tolist()
-        features_dict = {}
-        index = 1
-        for f in features:
-            features_dict[f] = index
-            index += 1
-        for i in self.centroid:
-            distance_from_sample.append(calc_auclidian_distance(0,self.centroid[i],len(features)))
-        distance_from_sample.sort(reverse=True)
+
+        for i in range(0,len(self.centroid)):
+            distance_from_sample.append(calc_auclidian_distance(o,self.centroid[i],len(features),i))
+        distance_from_sample.sort(reverse=True , key= lambda distance: distance[0])
         ans_for_best_K = []
+
         for i in range(0,self.K):
-            ans_for_best_K[i] = self.trees[distance_from_sample[i]].Classify(o,features_dict)
-        counts = [1 for c in ans_for_best_K if e == 'M']
-        return 'M' if len(counts) >= len(ans_for_best_K) - len(counts) else 'B'
+            ans_for_best_K.append(self.trees[distance_from_sample[i][1]].Classify(o))
 
-
+        counts = [1 for c in ans_for_best_K if c == 'M']
+        return 'M' if len(counts) >= len(ans_for_best_K)/2 else 'B'
 
 
 
@@ -47,12 +45,19 @@ class KNN:
 
 def calc_avg(data):
     assert isinstance(data,pandas.DataFrame)
+
+    np_values = data.values
+    data_len = np_values.shape[0]
     features = data.columns[1::].values.tolist()
-    avg_vector = []
-    for f in features:
-        avg_vector.append(data[f].mean())
+    avg_vector = np.zeros(len(features) + 1)
+    avg_vector[0] = 0
+    for i in range(1,len(features) + 1):
+        avg_vector[i] = sum([row[i] for row in np_values])/data_len
+
     return avg_vector
 
-def calc_auclidian_distance(o1,o2,feature_len):
+def calc_auclidian_distance(o1,o2,feature_len,index):
 
-    return math.sqrt(sum([(o1[i] - o2[i])**2 for i in range(0,feature_len)]))
+# +1 becuase of diangsosn , 02 doesnt have diagnosis
+#TDOD
+    return math.sqrt(sum([(o1[i] - o2[i])**2 for i in range(1,feature_len +1) ])) , index

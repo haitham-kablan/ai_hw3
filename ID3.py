@@ -29,9 +29,7 @@ def experiment(file_name):
    plt.plot(M_list, succ_rate, color='green', linestyle='dashed', linewidth=3,
             marker='o', markerfacecolor='blue', markersize=12)
 
-   # setting x and y axis range
-   #plt.ylim(0, 1)
-   #plt.xlim(1, 8)
+
 
    # naming the x axis
    plt.xlabel('M - axis')

@@ -18,7 +18,12 @@ def experiment():
     merged = pandas.concat([data,test])
 
     sum = np.zeros(len(N_list) * len(K_list) * len(P_list))
+    avg_list = []
+    for i in range(0,len(sum)):
+        avg_list.append([0 , None])
+
     kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
+    expr_index = 1
     for train_index, test_index in kf.split(merged):
         train = merged.iloc[train_index]
         test = merged.iloc[test_index]
@@ -30,19 +35,16 @@ def experiment():
                     print('testing for N= ',n,', K = ',k, 'P = ',p)
                     KNN = forest.KNN(N=n , K=k , P=p,data = train)
                     success_rate = utls.tests.succ_rate_test.test(test,KNN.Classify)
-                    sum[index] += success_rate
-                    print('     rate is: ',sum[index])
+                    avg_list[index][0] += success_rate
+                    avg_list[index][1] = (n,k,p)
+                    print('     rate is: ',avg_list[index][0]/expr_index)
                     index += 1
+        expr_index +=1
 
     # todo find print sum
-    print('***********************')
-    print('printing results')
-    index = 0
-    for n in N_list:
-        for k in K_list:
-            for p in P_list:
-                print('Avg for ',(n,k,p),'is: ',sum[index]/5)
-                index+=1
+    best_option = max(avg_list,key= lambda x:x[0])
+    print('         ****** DONE ******')
+    print('best n,k,p are : ' , best_option[1] , ' with success rate: ' , best_option[0])
 
 
 

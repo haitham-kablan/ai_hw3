@@ -14,7 +14,7 @@ def loss_rate(df_test,Classify_func):
     for i in range(0,len(test_data)):
         test_sample = test_data.iloc[i].tolist()
         actual_c = test_sample[0]
-        predicted_c = Classify_func(test_sample , features_dict)
+        predicted_c = Classify_func(test_sample)
 
         if actual_c == 'B' and predicted_c =='M':
             FP += 1

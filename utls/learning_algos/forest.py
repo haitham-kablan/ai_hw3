@@ -30,7 +30,7 @@ class KNN:
 
         for i in range(0,len(self.centroid)):
             distance_from_sample.append(calc_auclidian_distance(o,self.centroid[i],len(features),i))
-        distance_from_sample.sort(reverse=True , key= lambda distance: distance[0])
+        distance_from_sample.sort( key= lambda distance: distance[0])
         ans_for_best_K = []
 
         for i in range(0,self.K):

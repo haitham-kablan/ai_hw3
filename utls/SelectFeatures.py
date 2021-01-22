@@ -6,7 +6,8 @@ import utls.np_array_helper_functions as utls_np
 
 
 class IG_MAX:
-
+    def __init__(self,ratio):
+        self.ratio = ratio
     def IG_binary(self,saf,feature_index,E):
 
         H_e = self.H(E)
@@ -74,8 +75,8 @@ class IG_MAX:
         for c in ['B','M']:
             size_c  = (B if c == 'B' else M).shape[0]
             size_table = E.shape[0]
-
-            prob_c = size_c/size_table
+            factor = 1 if c =='M' else (10 if (size_c/size_table > self.ratio) else 1)
+            prob_c = (factor * size_c)/size_table
             log =  math.log(prob_c + eps,2)
             sum+= -prob_c * log
         return sum

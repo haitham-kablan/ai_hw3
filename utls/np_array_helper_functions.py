@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas
 
 """
     this file has helper function for np arrays in order to 
@@ -51,3 +52,20 @@ def get_all_B_all_M(array):
     B = np.array([row for row in array if row[0] == 'B'])
     M = np.array([row for row in array if row[0] == 'M'])
     return B, M
+
+
+def are_2_arrays_equal(arr1,arr2):
+    """
+
+    :param arr1:
+    :param arr2:
+    :return: check if arr1 and arr2 are equals (these arrays are list of lists)
+    """
+    if len(arr1) != len(arr2):
+        return False
+
+    for i in range(0,len(arr1)):
+        if not np.array_equal(arr1[i] , arr2[i]):
+            return False
+
+    return True

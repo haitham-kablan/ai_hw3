@@ -101,17 +101,18 @@ class IG_MAX:
         for c in ['B','M']:
             size_c  = (B if c == 'B' else M).shape[0]
             size_table = E.shape[0]
+
+            # this factor is used for part 4 (minimizing the loss)
+            # i want to make the entropy bigger for nodes with high number of B's people
+            # so the algorithm will try to avoid features that spilt for us the data to
+            # nodes with high number of B's , because if the node has high number of B's
+            # then id3 is likely to classify it as B , and i wanted to minimize the false
+            # negative errors , so i want id3 to classify M's more than B's
+            # check the dry for full and boring explanation.
             factor = 1 if c =='M' else (10 if (len(B) / len(E) >= self.ratio) else 1)
+
             prob_c =  (size_c * factor)/size_table
             log =  math.log(prob_c + eps,2)
             sum+= -prob_c * log
-
-        # this factor is used for part 4 (minimizing the loss)
-        # i want to make the entropy bigger for nodes with high number of B's people
-        # so the algorithm will try to avoid features that spilt for us the data to
-        # nodes with high number of B's , because if the node has high number of B's
-        # then id3 is likely to classify it as B , and i wanted to minimize the false
-        # negative errors , so i want id3 to classify M's more than B's
-        # check the dry for full and boring explanation.
 
         return sum

@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.model_selection import KFold
 import utls.learning_algos.ID3_impl
 import utls.np_array_helper_functions as np_utls
+import utls.np_array_helper_functions as np_utls
 
 
 def Classify(tree , test_sample ):
@@ -56,6 +57,12 @@ def TDIDT(E, F, DEFAULT, Select_Feature,M):
 
     bigger_than_saf , lower_than_saf = np_utls.split(E,new_feature_index,saf)
     subtrees = []
+
+    # if we have contracting samples , then then algorithm will stuck in infinite loop
+    # this is to prevent it
+    if np_utls.are_2_arrays_equal(bigger_than_saf ,E) or np_utls.are_2_arrays_equal(lower_than_saf,E):
+        return None, None, [], DEFAULT
+
     subtrees.append(TDIDT(bigger_than_saf,F,c, Select_Feature,M))
     subtrees.append(TDIDT(lower_than_saf,F,c, Select_Feature,M))
 

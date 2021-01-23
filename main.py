@@ -11,15 +11,18 @@ if __name__ == '__main__':
 
   df = pandas.read_csv('train.csv')
   test2 = pandas.read_csv('test.csv')
-  a = [1,2,3,4,5]
-  print(np.argmin(a))
-  x = ID3_impl.ID3(df,0)
-  y = ID3_impl.ID3(df,4)
-  x1 = test.loss_rate(test2,x.Classify)
-  y1=test.loss_rate(test2,y.Classify)
-  print('loss rate for M = 0: ' , x1)
-  print('loss rate for M = 4: ' ,y1 )
-  print('improvement ratio is: ',x1/y1)
+  print(df)
+  train = (df)[['diagnosis' , 'radius_mean']]
+  print(train)
+  # a = [1,2,3,4,5]
+  # print(np.argmin(a))
+  # x = ID3_impl.ID3(df,0)
+  # y = ID3_impl.ID3(df,4)
+  # x1 = test.loss_rate(test2,x.Classify)
+  # y1=test.loss_rate(test2,y.Classify)
+  # print('loss rate for M = 0: ' , x1)
+  # print('loss rate for M = 4: ' ,y1 )
+  # print('improvement ratio is: ',x1/y1)
 
 
 

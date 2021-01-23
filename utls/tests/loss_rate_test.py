@@ -1,6 +1,13 @@
 
 
 def loss_rate(df_test,Classify_func):
+
+    """
+    this function will calculate the loss rate of the given classifier for the given test
+    :param df_test: the test it self
+    :param Classify_func: the classify function of the classifier that we want to test
+    :return: the loss rate of the given classifier on the test
+    """
     FP=0
     FN=0
     test_data = df_test

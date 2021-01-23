@@ -1,6 +1,12 @@
 import numpy as np
 
 def test(df_test,Classify_func):
+    """
+    this function will calculate the success rate for a given classifier on the given test
+    :param df_test: the test it self
+    :param Classify_func: the classify function of the classifier that we want to test.
+    :return: the success rate of the given classifier on the test
+    """
 
     correct = 0
     test_data = np.array(df_test)

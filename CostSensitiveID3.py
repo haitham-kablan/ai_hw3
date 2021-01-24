@@ -13,6 +13,7 @@ import math
 def experiemnt(RATIO_VALS , M):
 
     data = pd.read_csv('train.csv')
+
     rotation_index = 1
     avg = np.zeros(len(RATIO_VALS))
     kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
@@ -30,6 +31,8 @@ def experiemnt(RATIO_VALS , M):
             avg[prob_index] += loss_rate
             prob_index +=1
 
+        print('best avg for rotaion: ' , rotation_index , ' is for ratio = ' , RATIO_VALS[np.argmin(avg)] , ' with loss rate: ' , min(avg)/rotation_index)
+    print('best ratio for M= ' , M , ' is: ',RATIO_VALS[np.argmin(avg)])
     return RATIO_VALS[np.argmin(avg)]
 
 
@@ -43,17 +46,22 @@ if __name__ == '__main__':
     for i in range(0,20):
         RATIO_VALS.append(i/20)
 
-    best_prob_for_m_0 = experiemnt(RATIO_VALS , 0)
-    best_prob_for_m_4 = experiemnt(RATIO_VALS , 4)
+    experiemnt(RATIO_VALS , 0)
+    experiemnt(RATIO_VALS , 4)
 
-    normal_loss_rate = loss_rate_test.loss_rate(test, ID3_impl.ID3(data,0).Classify)
-    loss_rate_m_0 = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0,best_prob_for_m_0))
-    loss_rate_m_4 = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0,best_prob_for_m_4))
 
-    print('loss rate normal = ' , normal_loss_rate)
-    print('loss rate for m = 0 and val = ' , best_prob_for_m_0 , ' is: ' , loss_rate_m_0)
-    print('improvement is: ' , normal_loss_rate , loss_rate_m_0)
+    #normal_loss_rate = loss_rate_test.loss_rate(test, ID3_impl.ID3(data, 0).Classify)
+    #normal_loss_rate_with_x = loss_rate_test.loss_rate(test, ID3_impl.ID3(data, 0,0.45).Classify)
+    #print('loss rate normal = ', normal_loss_rate)
+    #print('loss rate normal x = ', normal_loss_rate/normal_loss_rate_with_x)
 
-    print('loss rate for m = 4 and val = ', best_prob_for_m_4, ' is: ', loss_rate_m_4)
-    print('improvement is: ', normal_loss_rate, loss_rate_m_4)
+    #best_prob_for_m_0 = experiemnt(RATIO_VALS , 0)
+    #loss_rate_m_0 = loss_rate_test.loss_rate(test, ID3_impl.ID3(data, 0, best_prob_for_m_0).Classify)
+    #print('loss rate for m = 0 and val = ', best_prob_for_m_0, ' is: ', loss_rate_m_0)
+    #print('improvement is: ', normal_loss_rate / loss_rate_m_0)
+
+    #best_prob_for_m_4 = experiemnt(RATIO_VALS , 4)
+    #loss_rate_m_4 = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0,best_prob_for_m_4).Classify)
+    #print('loss rate for m = 4 and val = ', best_prob_for_m_4, ' is: ', loss_rate_m_4)
+    #print('improvement is: ', normal_loss_rate/ loss_rate_m_4)
 

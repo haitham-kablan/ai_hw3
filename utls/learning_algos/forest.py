@@ -33,32 +33,36 @@ class KNN_forest:
         for i in range(0, len(self.centroid)):
             distance_from_sample.append(calc_auclidian_distance(o, self.centroid[i], len(features), i))
         distance_from_sample.sort(key=lambda distance: distance[0])
-        ans_for_best_K = []
+        ans_for_best_k = []
 
-        M_number = 0
-        B_number = 0
 
-        predicted_0 = self.trees[distance_from_sample[0][1]].Classify(o)
+
         for i in range(0, self.K):
-
             predicted_c = self.trees[distance_from_sample[i][1]].Classify(o)
-            ans_for_best_K.append(predicted_c)
+            ans_for_best_k.append(predicted_c)
 
-            if predicted_c == 'M':
-                if self.improved:
+        M_counts = [1 for c in ans_for_best_k if c =='M']
+        B_counts = [1 for c in ans_for_best_k if c =='B']
 
-                    M_number += 2 if predicted_0 == predicted_c else 1
+
+        if not self.improved:
+            return 'M' if len(M_counts) > len(B_counts) else 'B'
+
+        else:
+            sum_m = 0
+            sum_b = 0
+            max_distance = distance_from_sample[self.K - 1][0]
+            if max_distance == 0:
+                max_distance = 1
+            twice_max_dis = max_distance * 2
+
+            for i in range(0,self.K):
+                predicted_c = ans_for_best_k[i]
+                if predicted_c == 'M':
+                    sum_m += twice_max_dis - distance_from_sample[i][0]
                 else:
-                    M_number += 1
-            else:
-                if self.improved:
-
-                    B_number += 2 if predicted_0 == predicted_c else 1
-                else:
-                    B_number += 1
-
-        return 'M' if M_number > B_number else 'B'
-
+                    sum_b += twice_max_dis - distance_from_sample[i][0]
+            return 'M' if sum_m > sum_b else 'B'
 
 
 

@@ -1,40 +1,26 @@
 
-
+import KNNForest as knn_expr
+import utls
 import pandas
-from sklearn.model_selection import KFold
-import numpy as np
-import utls.learning_algos.ID3_impl as ID3_impl
-import utls.tests.succ_rate_test as succ_rate_test
-def get_local_best_feature(F):
-
-    data = pandas.read_csv('train.csv')
-    kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
-    avg_per_feature = np.zeros(len(F))
-    for train_index, test_index in kf.split(data):
-        f_index = 0
-        for f in F:
-            train = (data.iloc[train_index])[['diagnosis' , f]]
-
-            test = data.iloc[test_index]
-
-            id3_tree = ID3_impl.ID3(train,0)
-            success_rate = succ_rate_test.test(test,id3_tree.Classify)
-            avg_per_feature[f_index] += success_rate
-            print('feature: ',f,' accuray is: ',success_rate)
-        print("     ###################")
-    return np.argmax(avg_per_feature) + 1
-
-
-
-
-
-
-
-
-
-
+import utls.learning_algos.forest as forest
 
 if __name__ == '__main__':
+
     df = pandas.read_csv('train.csv')
-    features = df.columns[1::].values.tolist()
-    print(features[get_local_best_feature(features)])
+    test = pandas.read_csv('test.csv')
+
+    #(best_n , best_k , best_p) = knn_expr.experiment(True)
+    (best_n , best_k , best_p) = (20 , 9 , 0.7)
+    print(' best k , n , p are: ' , (20 , 9 , 0.7))
+    max = -float('inf')
+    avg = 0
+    len = 10
+    for i in range(0, len):
+        success_rate = utls.tests.succ_rate_test.test(test, forest.KNN_forest(best_n, best_k, best_p, df , True).Classify)
+        if success_rate > max:
+            max = success_rate
+        print(success_rate)
+        avg += success_rate
+
+    print('max is: ', max)
+    print('avg success rate is: ', avg / len)

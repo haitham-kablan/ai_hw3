@@ -2,16 +2,16 @@ import utls.learning_algos.ID3_impl as ID3
 import pandas
 import numpy as np
 import math
-import utls.learning_algos.prune_id3 as prune_id3
+
 
 
 class KNN_forest:
-    def __init__(self, N, K, P, data , improved = False  , ratio = 1):
+    def __init__(self, N, K, P, data , improved = False ):
         assert isinstance(data, pandas.DataFrame)
 
         self.N = N
-        self.K = K
-        self.ratio = ratio
+        self.K = K if K < N else N
+
         self.data = data
         self.P = P
         n = len(data)
@@ -40,22 +40,22 @@ class KNN_forest:
 
         predicted_0 = self.trees[distance_from_sample[0][1]].Classify(o)
         for i in range(0, self.K):
+
             predicted_c = self.trees[distance_from_sample[i][1]].Classify(o)
             ans_for_best_K.append(predicted_c)
+
             if predicted_c == 'M':
                 if self.improved:
-                    #M_number += self.K-i if i < self.K/2 else self.K/2
-                    #M_number += self.K-i
+
                     M_number += 2 if predicted_0 == predicted_c else 1
                 else:
                     M_number += 1
             else:
                 if self.improved:
-                    #B_number += self.K-i if i < self.K/2 else self.K/2
+
                     B_number += 2 if predicted_0 == predicted_c else 1
-                    #B_number += self.K-i
                 else:
-                    B_number +=1
+                    B_number += 1
 
         return 'M' if M_number > B_number else 'B'
 

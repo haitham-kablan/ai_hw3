@@ -6,7 +6,7 @@ import utls.np_array_helper_functions as np_utls
 
 
 class ID3:
-    def __init__(self, df,M,ratio = 1.5):
+    def __init__(self, df,M,improved = False,ratio = 1.5):
         """
         this class will bulid for us an id3 decision tree and store it in self.tree
         :param df: the train data
@@ -21,7 +21,7 @@ class ID3:
 
         Default = np_utls.calc_majority(self.df_as_np_array)
 
-        self.tree = utls.TDIDT.TDIDT(self.df_as_np_array,self.features,Default,utls.SelectFeatures.IG_MAX(ratio).IG_max,M)
+        self.tree = utls.TDIDT.TDIDT(self.df_as_np_array,self.features,Default,utls.SelectFeatures.IG_MAX().IG_max,M,improved=improved,ratio=ratio)
 
     def Classify(self , o):
         return utls.TDIDT.Classify(self.tree,o)

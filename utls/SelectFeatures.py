@@ -7,13 +7,10 @@ import utls.np_array_helper_functions as utls_np
 
 class IG_MAX:
 
-    def __init__(self,ratio):
+    def __init__(self):
         """
         this class is used as the select_feature function in the id3.
-        :param ratio: this is only relevant in part 4 when we want to minimize the loss
-        you can check the H(self,E) function for more information (line 92).
         """
-        self.ratio = ratio
 
     def IG_binary(self,saf,feature_index,E):
         """
@@ -37,6 +34,7 @@ class IG_MAX:
                 return float('-inf')
             h_e_i = self.H(e_i)
             sum += (e_i_size/E_size) * h_e_i
+
         return H_e - sum
 
 
@@ -101,18 +99,8 @@ class IG_MAX:
         for c in ['B','M']:
             size_c  = (B if c == 'B' else M).shape[0]
             size_table = E.shape[0]
-
-            # this factor is used for part 4 (minimizing the loss)
-            # i want to make the entropy bigger for nodes with high number of B's people
-            # so the algorithm will try to avoid features that spilt for us the data to
-            # nodes with high number of B's , because if the node has high number of B's
-            # then id3 is likely to classify it as B , and i wanted to minimize the false
-            # negative errors , so i want id3 to classify M's more than B's
-            # check the dry for full and boring explanation.
-            factor = 1 if c =='M' else (10 if (len(B) / len(E) >= self.ratio) else 1)
-
-            prob_c =  (size_c * factor)/size_table
+            prob_c =  (size_c)/size_table
             log =  math.log(prob_c + eps,2)
             sum+= -prob_c * log
-
         return sum
+

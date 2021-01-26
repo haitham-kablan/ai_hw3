@@ -15,96 +15,54 @@ import utls.tests.succ_rate_test as succ_rate_test
 import math
 import pandas
 
+def experiment_allah(Ratios):
 
-class prune_ID3:
-    def __init__(self, Tree, V):
-        self.prune_tree = prune(Tree, V)
-
-    def Classify(self, o):
-        return TDIDT.Classify(self.prune_tree, o)
-
-
-def prune(Tree, V):
-    feature_index, saf, subtrees, c = Tree
-
-    if len(subtrees) == 0:
-        return Tree
-
-    samples = np_utls.split(V, feature_index, saf)
-
-    for i in range(0, 2):
-        subtrees[i] = prune(subtrees[i], samples[i])
-
-    err_prune = 0
-    err_no_prune = 0
-
-    # calc eorrs
-    for row in V:
-        actual_c = row[0]
-        predicted_c = TDIDT.Classify(Tree, row)
-        err_prune += Evaluate(actual_c, c)
-        err_no_prune += Evaluate(actual_c, predicted_c)
-
-    if err_prune < err_no_prune:
-        Tree = None, None, [], c
-
-    return Tree
-
-
-def Evaluate(actual_c, predicted_c):
-    if actual_c == predicted_c:
-        return 0
-    else:
-        return 1 if (actual_c == 'B' and predicted_c == 'M') else 10
-
-
-def prune_expr(data):
-    assert isinstance(data, pd.DataFrame)
-    VAL_PROB = [0.1, 0.2, 0.25, 0.3, 0.35, 0.4]
-    n = len(data)
-    avg = []
-    for val_prop in VAL_PROB:
-            avg.append([0 , val_prop])
-    index = 1
-    orig_data = data.copy()
+    data = pandas.read_csv('train.csv')
     kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
+    avg_per_index = []
+    for i in Ratios:
+        avg_per_index.append([0, i])
+
     for train_index, test_index in kf.split(data):
-        print('testing index = ', index)
-        p_index = 0
-        for val_prob in VAL_PROB:
-            train = data.iloc[train_index]
-            test = data.iloc[test_index]
-            validation_data = train.sample(math.floor(len(train) * val_prob))
-            train.drop(validation_data.index.tolist())
-            data = orig_data
-            id3_before_prune = ID3_impl.ID3(train, 0 , 0.9)
-            id3_after_prune = prune_ID3(id3_before_prune.tree, validation_data.values)
-            loss_rate = loss_rate_test.loss_rate(test, id3_after_prune.Classify)
-            print('     val_prob= ', val_prob, 'loss_rate is: ', loss_rate)
-            avg[p_index][0] += loss_rate
-            p_index += 1
-
-    return min(avg, key=lambda x: x[0])
-
-
-def experiment(data, RATIO_VALS):
-    assert isinstance(data, pd.DataFrame)
-    kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
-    avg_per_ratio = np.zeros(len(RATIO_VALS))
-    out_index = 1
-    for train_index, test_index in kf.split(data):
-        print('         Testing for index: ', out_index)
         train = data.iloc[train_index]
         test = data.iloc[test_index]
         index = 0
-        out_index += 1
-        for ratio in RATIO_VALS:
-            id3_tree = ID3_impl.ID3(train, 0, ratio)
-            loss_rate = loss_rate_test.loss_rate(test, id3_tree.Classify)
-            avg_per_ratio[index] += loss_rate
-            index += 1
-            print('             for ratios= ', ratio, ' current avg loss rate is: ', loss_rate / out_index)
-    return min(avg_per_ratio) , RATIO_VALS[np.argmin(avg_per_ratio)]
+        for ratio in Ratios:
+            x = loss_rate_test.loss_rate(test , ID3_impl.ID3(train,0,ratio).Classify)
+            avg_per_index[index][0] += x
+            print(x)
+            index +=1
+        print('done rotation')
+    x = min(avg_per_index , key= lambda x : x[0])
+    return avg_per_index[[i for i, j in enumerate(avg_per_index) if j[0] == x[0]][0]]
+
+
+def experiment(M):
+
+    data = pandas.read_csv('train.csv')
+    #sorted_features = find_best_features(data)
+
+    sorted_features = ['perimeter_worst', 'concavity_worst', 'compactness_worst', 'perimeter_mean', 'radius_mean',
+                        'area_mean', 'texture_worst', 'area_worst', 'compactness_mean', 'smoothness_se', 'texture_mean',
+                        'symmetry_se', 'radius_worst', 'fractal_dimension_worst', 'compactness_se', 'smoothness_mean',
+                        'concave points_se', 'symmetry_mean', 'texture_se', 'fractal_dimension_se', 'radius_se',
+                        'perimeter_se', 'area_se', 'concavity_se', 'symmetry_worst', 'concave points_mean',
+                        'fractal_dimension_mean', 'smoothness_worst', 'concave points_worst', 'concavity_mean']
+
+    kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
+    avg_per_index = []
+    for i in range(0 , len(sorted_features) ):
+        avg_per_index.append([ 0 , i])
+
+    for train_index, test_index in kf.split(data):
+        index = 0
+        for i in range( 0 , len(sorted_features)):
+            train = (data.iloc[train_index])[['diagnosis'] + sorted_features[:i+1]]
+            test = (data.iloc[test_index])[['diagnosis'] + sorted_features[:i+1]]
+            loss_rate = loss_rate_test.loss_rate(test , ID3_impl.ID3(train,M).Classify)
+            avg_per_index[index][0] += loss_rate
+
+    return min(avg_per_index)
 
 
 
@@ -127,45 +85,7 @@ def get_local_best_feature(rest_features , best_features_till_now):
     avg = [row/5 for row in avg_per_feature]
     return (min(avg) , rest_features[np.argmin(avg)])
 
-def experiment(data , RATIO_VALS):
 
-    kf = KFold(n_splits=5, shuffle=True, random_state=209418441)
-    rotation = 1
-    avg_for_4 = np.zeros(len(RATIO_VALS))
-    avg_for_0 = np.zeros(len(RATIO_VALS))
-    for train_index , test_index in kf.split(data):
-        print('testing for rotation = ', rotation)
-        rotation += 1
-        train = data.iloc[train_index]
-        test = data.iloc[test_index]
-
-        nrml_loss_rate = loss_rate_test.loss_rate(test, ID3_impl.ID3(train, 0).Classify)
-        nrml_loss_rate_4_m = loss_rate_test.loss_rate(test, ID3_impl.ID3(train, 4).Classify)
-
-        prob_index = 0
-        for prob in RATIO_VALS:
-
-
-            print('     loss rate for 0: ', nrml_loss_rate)
-            print('     loss rate for 4: ', nrml_loss_rate_4_m)
-            loss_rate_i_0 = loss_rate_test.loss_rate(test, ID3_impl.ID3(train, 0, prob).Classify)
-            loss_rate_i_4 = loss_rate_test.loss_rate(test, ID3_impl.ID3(train, 4, prob).Classify)
-            print('         loss rate for M = 0 , i = ', prob, 'is: ', loss_rate_i_0)
-            if loss_rate_i_0 ==0:
-                print('         shebor is inf')
-            else:
-                print('             shbor: ', nrml_loss_rate / loss_rate_i_0)
-            print('         loss rate for M = 4 , i = ', prob, 'is: ', loss_rate_i_4)
-            if loss_rate_i_4 == 0:
-                print('         shebor is inf')
-            else:
-                print('             shbor: ', nrml_loss_rate_4_m / loss_rate_i_4)
-
-            avg_for_4[prob_index] += loss_rate_i_4
-            avg_for_0[prob_index] += loss_rate_i_0
-            prob_index +=1
-        print('done current iteration')
-    return avg_for_0 , avg_for_4
 
 def find_best_features(data):
 
@@ -188,15 +108,39 @@ if __name__ == '__main__':
 
    #print(find_best_features(pandas.read_csv('train.csv')))
    data = pandas.read_csv('train.csv')
-   orig = data.copy()
    test = pandas.read_csv('test.csv')
-   orig_test = test.copy()
 
-   dont_delete_list = ['perimeter_worst', 'concavity_worst', 'compactness_worst', 'perimeter_mean', 'radius_mean', 'area_mean', 'texture_worst', 'area_worst', 'compactness_mean', 'smoothness_se', 'texture_mean', 'symmetry_se', 'radius_worst', 'fractal_dimension_worst', 'compactness_se', 'smoothness_mean', 'concave points_se', 'symmetry_mean', 'texture_se', 'fractal_dimension_se', 'radius_se', 'perimeter_se', 'area_se', 'concavity_se', 'symmetry_worst', 'concave points_mean', 'fractal_dimension_mean', 'smoothness_worst', 'concave points_worst', 'concavity_mean']
-   print(len(dont_delete_list))
-   for i in range(0,len(dont_delete_list)):
 
-       train = data[['diagnosis'] + dont_delete_list[:i+1]]
-       new_test = test[['diagnosis'] + dont_delete_list[:i+1]]
-       x = loss_rate_test.loss_rate(new_test,ID3_impl.ID3(train,0).Classify)
-       print()
+   #print(loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0,1.5,True).Classify))
+   ratios = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+   max23 = experiment_allah(ratios)
+   print('score is: ' , max23[0] , 'val is: ' , max23[1])
+   tree = ID3_impl.ID3(data,0,max23[1])
+   print(succ_rate_test.test(test,tree.Classify))
+   print(loss_rate_test.loss_rate(test,tree.Classify))
+   # for rat in ratios:
+   #     print(loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0,rat).Classify))
+
+   # best = experiment_allah(ratios)
+   # print("best is: " , best[0] , "ratios is " , best[1])
+   # print(loss_rate_test.loss_rate(test , ID3_impl.ID3(data,0,best[1]).Classify))
+   #loss_rate_normal_0 = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,0).Classify)
+   #loss_rate_normal_4 = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,4).Classify)
+   # dont_delete_list = ['perimeter_worst', 'concavity_worst', 'compactness_worst', 'perimeter_mean', 'radius_mean', 'area_mean', 'texture_worst', 'area_worst', 'compactness_mean', 'smoothness_se', 'texture_mean', 'symmetry_se', 'radius_worst', 'fractal_dimension_worst', 'compactness_se', 'smoothness_mean', 'concave points_se', 'symmetry_mean', 'texture_se', 'fractal_dimension_se', 'radius_se', 'perimeter_se', 'area_se', 'concavity_se', 'symmetry_worst', 'concave points_mean', 'fractal_dimension_mean', 'smoothness_worst', 'concave points_worst', 'concavity_mean']
+   # for i in range(0, len(dont_delete_list)):
+   #     train = data[['diagnosis'] + dont_delete_list[:i + 1]]
+   #     x = test[['diagnosis'] + dont_delete_list[:i + 1]]
+   #     loss_rate = loss_rate_test.loss_rate(x, ID3_impl.ID3(train, 0).Classify)
+   #     print(loss_rate)
+   # i_0 = experiment(0)
+   # new_loss_rate_0 = loss_rate_test.loss_rate(test[['diagnosis'] + dont_delete_list[:i_0[1]+1]],ID3_impl.ID3(data[['diagnosis'] + dont_delete_list[:i_0[1]+1]],0).Classify)
+   # print('FOR M = 0 :')
+   # print('  loss rate went from ' , new_loss_rate_0,' to ',new_loss_rate_0)
+   # print('  improvement is: ' , loss_rate_normal_0/new_loss_rate_0)
+   # i_4 = experiment(4)
+   # new_loss_rate_4 = loss_rate_test.loss_rate(test[['diagnosis'] + dont_delete_list[:i_4[1] + 1]],
+   #                                            ID3_impl.ID3(data[['diagnosis'] + dont_delete_list[:i_4[1] + 1]],
+   #                                                         4).Classify)
+   # print('FOR M = 4 :')
+   # print('  loss rate went from ', loss_rate_normal_4, ' to ', new_loss_rate_4)
+   # print('  improvement is: ', loss_rate_normal_4 / new_loss_rate_4)

@@ -89,7 +89,12 @@ if __name__ == '__main__':
 
    # here we bulid ID3_classifier and we save the desicion tree inside it
    # u can click on it for more information.
+   # the tree is bulid using TDIDT function wchich is in utls.TDIDT
    Classifer_ID3 = ID3_imp.ID3(df,0)
+
+   # part 3.2
+   # the early prune is implemented in utls.TDIDT
+
 
    # part 3.4
    #Classifer_ID3_M_4 = ID3_imp.ID3(df,4)

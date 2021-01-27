@@ -11,6 +11,7 @@ class ID3:
         this class will bulid for us an id3 decision tree and store it in self.tree
         :param df: the train data
         :param M: the prune parameter
+        :param improved: whether to know we want the improved knn (part 4) or not (part 1-3)
         :param ratio: this is used for part 4 (improving the loss) if it bigger than 1
         then this class will behave exactly as the id3 that we learned in the lectures
         (it is not relevant for part 1 and 3)

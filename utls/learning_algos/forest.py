@@ -7,6 +7,14 @@ import math
 
 class KNN_forest:
     def __init__(self, N, K, P, data , improved = False ):
+        """
+
+        :param N:
+        :param K:
+        :param P:
+        :param data:
+        :param improved: whether to know we want the improved knn (part 7) or not (part 6)
+        """
         assert isinstance(data, pandas.DataFrame)
 
         self.N = N

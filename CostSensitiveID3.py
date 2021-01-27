@@ -1,13 +1,9 @@
-import utls.np_array_helper_functions as np_utls
-import utls.TDIDT as TDIDT
+
 import utls.learning_algos.ID3_impl as ID3_impl
 import pandas as pd
 import utls.tests.loss_rate_test as loss_rate_test
 from sklearn.model_selection import KFold
-import numpy as np
-import utls.learning_algos.prune_id3 as pruned_id3
-import utls.tests.succ_rate_test as succ_rate_test
-import math
+
 
 def experiment(RATIO_VLAS,M):
     """
@@ -47,6 +43,8 @@ if __name__ == '__main__':
     # best_ratio = experiment(RATIO_VLAS,4)
 
     # from the experiemnt i found that best ratio is 0.7
+
+    # the improvement is in utls.TDIDT
 
     best_ratio = 0.7
     improved_loss_rate = loss_rate_test.loss_rate(test,ID3_impl.ID3(data,4,True,best_ratio).Classify)
